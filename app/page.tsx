@@ -1,40 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Greet } from "./components/greet";
-import { Counter } from "@/app/components/counter";
 
 export default function Home() {
-  //xuat du lieu bang experts
   const [experts, setExperts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
-        const data = fetch("/api/experts");
-        const response = await data.json();
-        setExperts(response.experts);
-        console.log(response);
+        const response = await fetch("/api/experts");
+
+        // Kiểm tra nếu phản hồi không phải JSON
+        if (
+          !response.ok ||
+          !response.headers.get("content-type")?.includes("application/json")
+        ) {
+          throw new Error("Invalid JSON response");
+        }
+
+        const data = await response.json();
+        setExperts(data);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching data: ", error);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
     fetchData();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div>
+      <h1>List of Experts</h1>
+      <ul>
         {experts.map((expert) => (
-          <div>{expert.expert}</div>
-        ))}
-        <Counter />
-        <Greet />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left">
-          <li className="mb-2">
-            Get started by editing{""}
-            <code className="bg-black/[.05] px-1 py-0.5">src/app/page.tsx</code>
+          <li key={expert.expert_id}>
+            {expert.name} - {expert.expertise}
           </li>
-        </ol>
-      </main>
+        ))}
+      </ul>
     </div>
   );
 }
