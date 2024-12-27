@@ -11,11 +11,14 @@ export default function Home() {
       try {
         const response = await fetch("/api/experts");
 
-        // Kiểm tra nếu phản hồi không phải JSON
-        if (
-          !response.ok ||
-          !response.headers.get("content-type")?.includes("application/json")
-        ) {
+        /// Kiểm tra trạng thái phản hồi
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Kiểm tra Content-Type
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
           throw new Error("Invalid JSON response");
         }
 
