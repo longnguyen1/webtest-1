@@ -1,50 +1,35 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { register } from "@/actions/userController";
 
 export default function Home() {
-  const [experts, setExperts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("/api/experts");
-
-        /// Kiểm tra trạng thái phản hồi
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Kiểm tra Content-Type
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Invalid JSON response");
-        }
-
-        const data = await response.json();
-        setExperts(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (loading) return <p>Loading...</p>;
-
   return (
     <div>
-      <h1>List of Experts</h1>
-      <ul>
-        {experts.map((expert) => (
-          <li key={expert.expert_id}>
-            {expert.name} - {expert.expertise}
-          </li>
-        ))}
-      </ul>
+      <p className="text-center text-2xl text-gray-600 mb-5">
+        Don&rsquo;t have an account? <strong>Create One</strong>
+      </p>
+      <form action={register} className="max-w-xs mx-auto">
+        <div className="mb-3">
+          <input
+            name="username"
+            autoComplete="off"
+            type="text"
+            placeholder="Username"
+            className="input input-bordered w-full max-w-xs"
+          />
+        </div>
+        <div className="mb-3">
+          <input
+            name="password"
+            autoComplete="off"
+            type="password"
+            placeholder="Password"
+            className="input input-bordered w-full max-w-xs"
+          />
+        </div>
+        <button className="btn btn-primary border-t-cyan-800">
+          Create Account
+        </button>
+      </form>
     </div>
   );
 }

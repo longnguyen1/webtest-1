@@ -2,85 +2,57 @@
 
 import { useEffect, useState } from "react";
 
-export default function ExpertsPage() {
-  const [data, setData] = useState<any | null>(null); // Dữ liệu trả về từ API
-  const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [error, setError] = useState<string | null>(null); // Trạng thái lỗi
+export default function Home() {
+  const [experts, setExperts] = useState([]);
+  const [scientificworks, setScientificworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Hàm gọi API để lấy danh sách các chuyên gia và công trình khoa học
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("/api/experts-with-works");
-        if (!response.ok) throw new Error("Failed to fetch data");
+        const response = await fetch("/api/experts");
 
-        const result = await response.json();
-        console.log("Data fetched successfully:", result); // Log dữ liệu để kiểm tra
+        /// Kiểm tra trạng thái phản hồi
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        setData(result); // Lưu dữ liệu vào state
-      } catch (err: any) {
-        setError(err.message); // Lưu thông báo lỗi nếu có
-        console.error("Error fetching data:", err);
+        // Kiểm tra Content-Type
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Invalid JSON response");
+        }
+
+        const data = await response.json();
+        setExperts(data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
       } finally {
-        setLoading(false); // Kết thúc trạng thái loading
+        setLoading(false);
       }
     }
+    fetchData();
+  }, []);
 
-    fetchData(); // Gọi hàm fetch khi component mount
-  }, []); // Chạy khi component được render lần đầu
-
-  // Nếu đang tải dữ liệu
   if (loading) return <p>Loading...</p>;
 
-  // Nếu có lỗi
-  if (error) return <p>Error: {error}</p>;
-
-  // Nếu có dữ liệu
   return (
-    <div style={{ padding: "20px", maxWidth: "100%", overflowX: "auto" }}>
-      <h1>Experts and Their Scientific Works</h1>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <div>
+      <h1>Danh sách chuyên gia</h1>
+      <table className="table-auto">
         <thead>
           <tr>
-            <th
-              style={{
-                border: "1px solid black",
-                padding: "8px",
-                textAlign: "left",
-              }}
-            >
-              Expert Name
-            </th>
-            <th
-              style={{
-                border: "1px solid black",
-                padding: "8px",
-                textAlign: "left",
-              }}
-            >
-              Scientific Works
-            </th>
+            <th>Expert ID</th>
+            <th>Expert Name</th>
+            <th>Year</th>
           </tr>
         </thead>
         <tbody>
-          {data?.experts?.map((expert: any) => (
+          {experts.map((expert) => (
             <tr key={expert.expert_id}>
-              <td style={{ border: "1px solid black", padding: "8px" }}>
-                {expert.name}
-              </td>
-              <td style={{ border: "1px solid black", padding: "8px" }}>
-                <ul>
-                  {expert.works?.length > 0 ? (
-                    expert.works.map((work: any, idx: number) => (
-                      <li key={idx} style={{ marginBottom: "5px" }}>
-                        {work.name}
-                      </li>
-                    ))
-                  ) : (
-                    <p>No scientific works available</p>
-                  )}
-                </ul>
-              </td>
+              <td>{expert.expert_id}</td>
+              <td>{expert.name}</td>
+              <td>{expert.expertise}</td>
             </tr>
           ))}
         </tbody>
