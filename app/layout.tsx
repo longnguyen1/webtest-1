@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 //import "boostrap/dist/css/bootstrap.css";
 import "./globals.css";
 import Link from "next/link";
-import { Navigation } from "@/app/components/navigation";
+import { Navigation } from "@/components/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,25 +30,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <main>
           <header className="bg-slate-900 text-white p-4 text-center">
-            {/*<p>Welcom to my Next.js web </p>*/}
             <Navigation />
-            <div className="container mx-auto">
-              <div className="navbar">
-                <div className="flex-1">
-                  <Link href="/" className="btn btn-ghost text-xl">
-                    OurApp
-                  </Link>
-                </div>
-                <div className="flex-none">
-                  <ul className="menu menu-horizontal px-1">
-                    <li>
-                      <Link href="/login">Log In</Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </header>
+
           <main className="container mx-auto p-10">{children}</main>
           <footer className="bg-slate-900 text-white p-4 text-center">
             <p>
