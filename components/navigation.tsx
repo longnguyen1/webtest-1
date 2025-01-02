@@ -2,59 +2,75 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export const Navigation = () => {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Kiểm tra trạng thái đăng nhập
-  useEffect(() => {
-    const token = localStorage.getItem("token"); // Giả sử bạn lưu token đăng nhập ở localStorage
-    setIsLoggedIn(!!token);
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Xóa token đăng nhập
-    setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
-    window.location.href = "/"; // Chuyển hướng về trang chủ
+    setIsLoggedIn(false);
+    console.log("User logged out");
   };
 
   return (
-    <nav>
+    <nav className="flex items-center justify-center bg-gray-800 text-white py-4 shadow-lg">
       <Link
         href="/"
-        className={pathname === "/" ? "font-bold mr-4" : "text-blue-500 mr-4"}
+        className={`mx-4 px-4 py-2 rounded-lg transition-all ${
+          pathname === "/"
+            ? "bg-blue-600 text-white"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        }`}
       >
         Home
       </Link>
       <Link
         href="/about"
-        className={
-          pathname === "/about" ? "font-bold mr-4" : "text-blue-500 mr-4"
-        }
+        className={`mx-4 px-4 py-2 rounded-lg transition-all ${
+          pathname === "/about"
+            ? "bg-blue-600 text-white"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        }`}
       >
         About
       </Link>
       <Link
         href="/experts"
-        className={
+        className={`mx-4 px-4 py-2 rounded-lg transition-all ${
           pathname.startsWith("/experts")
-            ? "font-bold mr-4"
-            : "text-blue-500 mr-4"
-        }
+            ? "bg-blue-600 text-white"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        }`}
       >
-        Expert
+        Experts
+      </Link>
+      <Link
+        href="/scientificworks"
+        className={`mx-4 px-4 py-2 rounded-lg transition-all ${
+          pathname.startsWith("/scientificworks")
+            ? "bg-blue-600 text-white"
+            : "text-gray-300 hover:bg-gray-700 hover:text-white"
+        }`}
+      >
+        Scientific Works
       </Link>
       {!isLoggedIn ? (
         <Link
           href="/login"
-          className={pathname === "/login" ? "font-bold" : "text-blue-500"}
+          className={`mx-4 px-4 py-2 rounded-lg transition-all ${
+            pathname === "/login"
+              ? "bg-blue-600 text-white"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white"
+          }`}
         >
           Log In
         </Link>
       ) : (
-        <button onClick={handleLogout} className="text-blue-500 font-bold ml-4">
+        <button
+          onClick={handleLogout}
+          className="mx-4 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-all"
+        >
           Log Out
         </button>
       )}

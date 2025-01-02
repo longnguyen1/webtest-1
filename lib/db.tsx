@@ -1,9 +1,8 @@
 import mysql from "mysql2/promise";
 
-const connection = await mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "test",
+export const db = mysql.createPool({
+  host: "localhost", // Đảm bảo host chính xác
+  user: "root", // Tên người dùng
+  password: "", // Mật khẩu chính xác
+  database: "test", // Tên database chính xác
 });
-export default connection;

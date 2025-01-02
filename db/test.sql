@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2024 at 12:56 AM
+-- Generation Time: Jan 02, 2025 at 10:03 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -163,6 +163,30 @@ INSERT INTO `scientificworks` (`work_id`, `name`, `field`, `place_of_application
 (37, ' “A Reliable Approach to Secure IoT Systems Using Cryptosystems Based on SoC FPGA Platforms,” Tuan-Kiet Tran, Tan-Phat Dang, Trong-Tu Bui, and Huu-Thuan Huynh,', 'hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 53-58)'),
 (38, ' “A Reliable Approach to Secure IoT Systems Using Cryptosystems Based on SoC FPGA Platforms,” Tuan-Kiet Tran, Tan-Phat Dang, Trong-Tu Bui, and Huu-Thuan Huynh,', 'hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 53-58)');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `last_login` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`user_id`, `name`, `email`, `password`, `last_login`) VALUES
+(1, 'long', 'nguyenthanhlong601@gmail.com', '123456', '2025-01-02 04:01:50'),
+(2, 'long1', '123@gmail.com', '123456', '2025-01-02 04:04:56'),
+(3, 'trung', 'nguyenthanhtrung@gmail.com', '123456', '2025-01-02 08:09:06'),
+(4, 'phuong', 'phuong@gmail.com', '123456', '2025-01-02 09:00:30');
+
 --
 -- Indexes for dumped tables
 --
@@ -189,6 +213,13 @@ ALTER TABLE `scientificworks`
   ADD PRIMARY KEY (`work_id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -209,6 +240,12 @@ ALTER TABLE `expertscientificworks`
 --
 ALTER TABLE `scientificworks`
   MODIFY `work_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
