@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 10:03 AM
+-- Generation Time: Jan 02, 2025 at 05:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -185,7 +185,10 @@ INSERT INTO `users` (`user_id`, `name`, `email`, `password`, `last_login`) VALUE
 (1, 'long', 'nguyenthanhlong601@gmail.com', '123456', '2025-01-02 04:01:50'),
 (2, 'long1', '123@gmail.com', '123456', '2025-01-02 04:04:56'),
 (3, 'trung', 'nguyenthanhtrung@gmail.com', '123456', '2025-01-02 08:09:06'),
-(4, 'phuong', 'phuong@gmail.com', '123456', '2025-01-02 09:00:30');
+(4, 'phuong', 'phuong@gmail.com', '123456', '2025-01-02 09:00:30'),
+(5, 'Nam', 'nam@gmail.com', '123456', '2025-01-02 09:05:55'),
+(6, 'chien', 'chien@gmail.com', '123456', '2025-01-02 09:48:38'),
+(7, 'tuan', 'tuan@gmail.com', '123456', '2025-01-02 10:18:20');
 
 --
 -- Indexes for dumped tables
@@ -216,8 +219,7 @@ ALTER TABLE `scientificworks`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -245,7 +247,7 @@ ALTER TABLE `scientificworks`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
