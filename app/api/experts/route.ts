@@ -1,28 +1,43 @@
 import { NextResponse } from "next/server";
-import mysql from "mysql2/promise";
+import { db } from "@/lib/db"; // Đảm bảo bạn đã thiết lập kết nối DB trong lib/db.ts.
 
-// Cấu hình kết nối MySQL
-const dbConfig = {
-  host: "localhost",
-  user: "root",
-  password: "", // Thay bằng mật khẩu của bạn
-  database: "test",
-};
-
-// API handler
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // Kết nối đến database
-    const connection = await mysql.createConnection(dbConfig);
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10); // Mặc định là trang 1
+    const limit = parseInt(searchParams.get("limit") || "10", 10); // Mặc định là 10 kết quả
+    const search = searchParams.get("search") || ""; // Từ khóa tìm kiếm, mặc định là rỗng
 
-    // Lấy dữ liệu từ bảng Experts
-    const [rows] = await connection.execute("SELECT * FROM experts");
+    const offset = (page - 1) * limit;
 
-    // Đóng kết nối
-    await connection.end();
+    // Truy vấn SQL với phân trang và tìm kiếm
+    const query = `
+      SELECT * FROM experts
+      WHERE name LIKE ? OR expertise LIKE ?
+      LIMIT ? OFFSET ?
+    `;
+    const params = [`%${search}%`, `%${search}%`, limit, offset];
+    const [experts] = await db.query(query, params);
 
-    // Trả dữ liệu JSON
-    return NextResponse.json(rows);
+    // Truy vấn tổng số bản ghi để tính tổng số trang
+    const countQuery = `
+      SELECT COUNT(*) as total FROM experts
+      WHERE name LIKE ? OR expertise LIKE ?
+    `;
+    const [countResult] = await db.query(countQuery, [`%${search}%`, `%${search}%`]);
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / limit);
+
+    // Trả về kết quả
+    return NextResponse.json({
+      data: experts,
+      pagination: {
+        total,
+        totalPages,
+        currentPage: page,
+        pageSize: limit,
+      },
+    });
   } catch (error) {
     console.error("Error fetching experts:", error);
     return NextResponse.json(

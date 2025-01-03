@@ -39,19 +39,39 @@ export async function DELETE(request: Request, { params }: { params: { userId: s
 }
 
 // Xử lý yêu cầu PUT để sửa thông tin người dùng theo userId
-export async function PUT(req: Request, { params }: { params: { userId: string } }) {
+export async function PUT(req, context) {
     try {
-      const userId = params.userId;
-      const { name, email, password } = await req.json();
+        // Đợi `params` resolve trước khi sử dụng
+      const { id: userId } = await context.params; // Trích xuất `userId` từ `params`
+      
+      const body = await req.json();
+        
+      console.log(context)
+      console.log("Updating user with ID:", userId);
+      console.log("Received body:", body);
+  
+      const { name, email, password } = body;
   
       if (!name || !email || !password) {
-        return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Missing required fields" },
+          { status: 400 }
+        );
       }
   
-      await db.query(
+      const result = await db.query(
         "UPDATE users SET name = ?, email = ?, password = ? WHERE user_id = ?",
         [name, email, password, userId]
       );
+  
+      console.log("SQL Result:", result);
+  
+      if (result[0].affectedRows === 0) {
+        return NextResponse.json(
+          { error: "No user found with the specified ID" },
+          { status: 404 }
+        );
+      }
   
       return NextResponse.json({ message: "User updated successfully" });
     } catch (error) {

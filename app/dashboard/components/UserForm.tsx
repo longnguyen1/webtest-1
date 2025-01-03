@@ -1,99 +1,95 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+"use client";
 
-export default function UserForm({
-  userId,
-  userData,
-  onUpdate,
-}: {
-  userId: string;
-  userData: any;
-  onUpdate: (data: any) => void;
-}) {
-  const [name, setName] = useState(userData.name);
-  const [email, setEmail] = useState(userData.email);
-  const [password, setPassword] = useState(userData.password);
-  const [loading, setLoading] = useState(false);
+import { useState } from "react";
 
-  const router = useRouter();
+export default function UserForm({ user, onSubmit, onCancel }) {
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    password: "",
+  });
 
-  useEffect(() => {
-    setName(userData.name);
-    setEmail(userData.email);
-    setPassword(userData.password);
-  }, [userData]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    setLoading(true);
-    const response = await fetch(`/api/users/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      onUpdate(result);
-      router.push("/dashboard"); // Điều hướng về trang Dashboard sau khi cập nhật thành công
-    } else {
-      alert(result.error || "Error updating user");
+    // Validate the input
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("All fields are required.");
+      return;
     }
 
-    setLoading(false);
+    // Submit data
+    onSubmit(formData);
   };
 
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Edit User</h1>
+    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold mb-4">
+        {user ? "Edit User" : "Add User"}
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium">
             Name
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
           />
         </div>
-
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
+          <label htmlFor="email" className="block text-sm font-medium">
             Email
           </label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
           />
         </div>
-
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block text-sm font-medium">
             Password
           </label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
           />
         </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update User"}
-        </button>
+        <div className="flex justify-end space-x-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 bg-gray-500 text-white rounded"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            {user ? "Update" : "Add"}
+          </button>
+        </div>
       </form>
     </div>
   );
