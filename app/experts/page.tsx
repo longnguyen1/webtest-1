@@ -8,7 +8,7 @@ const ExpertsPage = () => {
   useEffect(() => {
     const fetchExperts = async () => {
       try {
-        const response = await fetch("/api/experts");
+        const response = await fetch("/api/experts/all");
         if (!response.ok) {
           throw new Error("Failed to fetch experts");
         }

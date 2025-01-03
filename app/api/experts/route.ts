@@ -1,48 +1,86 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db"; // Đảm bảo bạn đã thiết lập kết nối DB trong lib/db.ts.
+import { db } from "@/lib/db";
 
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1", 10); // Mặc định là trang 1
-    const limit = parseInt(searchParams.get("limit") || "10", 10); // Mặc định là 10 kết quả
-    const search = searchParams.get("search") || ""; // Từ khóa tìm kiếm, mặc định là rỗng
+// Hàm GET lấy danh sách experts hoặc works của expert
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const search = searchParams.get("search");
+  const expertId = searchParams.get("expertId");
 
-    const offset = (page - 1) * limit;
-
-    // Truy vấn SQL với phân trang và tìm kiếm
+  if (expertId) {
+    // Trả về các scientificworks của expert cụ thể
     const query = `
-      SELECT * FROM experts
-      WHERE name LIKE ? OR expertise LIKE ?
-      LIMIT ? OFFSET ?
+      SELECT sw.*
+      FROM scientificworks sw
+      JOIN expertscientificworks esw ON esw.work_id = sw.work_id
+      WHERE esw.expert_id = ?
     `;
-    const params = [`%${search}%`, `%${search}%`, limit, offset];
-    const [experts] = await db.query(query, params);
+    
+    try {
+      const [rows] = await db.query(query, [expertId]);
+      return NextResponse.json({ data: rows });
+    } catch (error) {
+      console.error("Error fetching works:", error);
+      return NextResponse.json({ error: "Unable to fetch works" }, { status: 500 });
+    }
+  }
 
-    // Truy vấn tổng số bản ghi để tính tổng số trang
-    const countQuery = `
-      SELECT COUNT(*) as total FROM experts
-      WHERE name LIKE ? OR expertise LIKE ?
-    `;
-    const [countResult] = await db.query(countQuery, [`%${search}%`, `%${search}%`]);
-    const total = countResult[0].total;
-    const totalPages = Math.ceil(total / limit);
-
-    // Trả về kết quả
-    return NextResponse.json({
-      data: experts,
-      pagination: {
-        total,
-        totalPages,
-        currentPage: page,
-        pageSize: limit,
-      },
-    });
+  // Trả về danh sách experts
+  const query = `
+    SELECT * FROM experts 
+    WHERE name LIKE ?
+  `;
+  
+  try {
+    const [rows] = await db.query(query, [`%${search || ''}%`]);
+    return NextResponse.json({ data: rows });
   } catch (error) {
     console.error("Error fetching experts:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch experts" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Unable to fetch experts" }, { status: 500 });
   }
 }
+
+export async function POST(req) {
+    const { name, code, year_of_birth, expertise, works } = await req.json();
+  
+    const connection = await db.getConnection();
+  
+    try {
+      await connection.beginTransaction();
+  
+      // Insert expert vào bảng experts
+      const [result] = await connection.query(
+        "INSERT INTO experts (name, code, year_of_birth, expertise) VALUES (?, ?, ?, ?)",
+        [name, code, year_of_birth, expertise]
+      );
+      
+      const expertId = result.insertId;
+  
+      // Thêm các scientificworks vào bảng scientificworks
+      for (const work of works) {
+        const [workResult] = await connection.query(
+          "INSERT INTO scientificworks (title, year) VALUES (?, ?)",
+          [work.title, work.year]
+        );
+        
+        const workId = workResult.insertId;
+  
+        // Thêm vào bảng liên kết expertscientificworks
+        await connection.query(
+          "INSERT INTO expertscientificworks (expert_id, work_id) VALUES (?, ?)",
+          [expertId, workId]
+        );
+      }
+  
+      await connection.commit();
+  
+      return NextResponse.json({ message: "Expert and works added successfully" });
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error adding expert and works:", error);
+      return NextResponse.json({ error: "Error adding expert and works" }, { status: 500 });
+    } finally {
+      connection.release();
+    }
+  }
+  
