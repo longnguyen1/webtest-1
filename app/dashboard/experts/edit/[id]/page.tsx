@@ -7,6 +7,8 @@ const EditExpertPage = () => {
   const { id } = useParams(); // Lấy ID từ URL
   const router = useRouter();
 
+  console.log("Editing expert with ID:", id); // Kiểm tra ID được truyền vào
+
   const [expert, setExpert] = useState(null);
   const [scientificWorks, setScientificWorks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,7 +82,7 @@ const EditExpertPage = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Edit Expert</h1>
+      <h1 className="text-2xl font-bold mb-6">Edit Page for ID: {id}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

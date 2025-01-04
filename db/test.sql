@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 05:41 PM
+-- Generation Time: Jan 04, 2025 at 08:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,12 @@ INSERT INTO `experts` (`expert_id`, `name`, `code`, `year_of_birth`, `address`, 
 (5, 'LÊ ĐỨC HÙNG', 'fetel-05', '1990', 'Hiện đang công tác tại Khoa Điện tử – Viễn thông, Trưởng Bộ môn Điện tử, Trưởng Phòng thí nghiệm DESLAB.', '0900000000', 'Thiết kế vi mạch; Điện tử y sinh; Hệ thống SoC tiên tiến.'),
 (6, 'GS.TS. ĐINH SỸ HIỀN', 'fetel-06', '1950', 'Khoa Điện tử – Viễn thông', '0900000000', 'Tốt nghiệp đại học năm 1974 tại trường Đại học Hà Nội và tốt nghiệp tiến sĩ năm 1992 tại National Institute for Atomic Energy.\r\nHướng nghiên cứu:\r\n– Nuclear Electronics, Nanoelectronics'),
 (7, 'BÙI TRỌNG TÚ', 'fetel-07', '1980', 'trường Đại học Khoa học Tự nhiên, Đại học Quốc gia Thành phố Hồ Chí Minh.', '0900000000', '– Tốt nghiệp Đại học và Cao học tại trường Đại học Khoa học Tự nhiên, Đại học Quốc gia Thành phố Hồ Chí Minh.\r\n– Tốt nghiệp tiến sĩ tại Đại học Tokyo, Nhật Bản\r\nLĩnh vực chuyên môn:\r\n– Lĩnh vực: Điện tử – Viễn thông\r\n– Chuyên ngành: Vi điện tử\r\n– Chuyên m'),
-(8, 'HUỲNH HỮU THUẬN', 'fetel-08', '1970', 'khoa Điện tử – Viễn thông HCMUS', '0900000000', 'Tốt nghiệp Đại học, Thạc sỹ và Tiến sỹ vào các năm 1997, 2001 và 2009 tương ứng. Lĩnh vực chuyên môn là Máy tính – Hệ thống nhúng trên DSP, FPGA và thiết kế vi mạch.\r\nHướng nghiên cứu:\r\nDSP trong xử lý âm thanh, hình ảnh, Kiến trúc phần cứng, hệ thống nhú');
+(8, 'HUỲNH HỮU THUẬN', 'fetel-08', '1970', 'khoa Điện tử – Viễn thông HCMUS', '0900000000', 'Tốt nghiệp Đại học, Thạc sỹ và Tiến sỹ vào các năm 1997, 2001 và 2009 tương ứng. Lĩnh vực chuyên môn là Máy tính – Hệ thống nhúng trên DSP, FPGA và thiết kế vi mạch.\r\nHướng nghiên cứu:\r\nDSP trong xử lý âm thanh, hình ảnh, Kiến trúc phần cứng, hệ thống nhú'),
+(14, 'Long', 'fetel-09', '2000', NULL, NULL, 'aaaaaaaaaaaaaaaa'),
+(15, 'long2', 'fetel-12', '2000', NULL, NULL, 'aaaaaaaaaaaaaaaaaa'),
+(16, 'trung', 'fetel-14', '2000', NULL, NULL, 'âsasasasa'),
+(17, 'trung2', 'fetel-15', '1999', NULL, NULL, 'aaaaaaaaaaaaaaaaaa'),
+(18, 'trung3', 'fetel-16', '1999', NULL, NULL, 'sssssssssssssss');
 
 -- --------------------------------------------------------
 
@@ -104,7 +109,8 @@ INSERT INTO `expertscientificworks` (`id`, `expert_id`, `work_id`) VALUES
 (35, 8, 35),
 (36, 8, 36),
 (37, 8, 37),
-(38, 8, 38);
+(38, 8, 38),
+(44, 18, 39);
 
 -- --------------------------------------------------------
 
@@ -161,7 +167,8 @@ INSERT INTO `scientificworks` (`work_id`, `name`, `field`, `place_of_application
 (35, ' “Security Enhancement for IoT Systems Based on SoC FPGA Platforms,” Huu-Thuan Huynh, Tuan-Kiet Tran, Tan-Phat Dang, and Trong-Tu Bui,', 'hệ thống nhúng (trên cơ sở FPGA', '2020 4th International Conference on Recent Advances in Signal Processing, Telecommunications & Computing (SigTelCom), 2020, pp. 35-39'),
 (36, '“LoRa Gateway Based on SoC FPGA Platforms,” Tan-Phat Dang, Tuan-Kiet Tran, Trong-Tu Bui, and Huu-Thuan Huynh, ', ' hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 48-52'),
 (37, ' “A Reliable Approach to Secure IoT Systems Using Cryptosystems Based on SoC FPGA Platforms,” Tuan-Kiet Tran, Tan-Phat Dang, Trong-Tu Bui, and Huu-Thuan Huynh,', 'hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 53-58)'),
-(38, ' “A Reliable Approach to Secure IoT Systems Using Cryptosystems Based on SoC FPGA Platforms,” Tuan-Kiet Tran, Tan-Phat Dang, Trong-Tu Bui, and Huu-Thuan Huynh,', 'hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 53-58)');
+(38, ' “A Reliable Approach to Secure IoT Systems Using Cryptosystems Based on SoC FPGA Platforms,” Tuan-Kiet Tran, Tan-Phat Dang, Trong-Tu Bui, and Huu-Thuan Huynh,', 'hệ thống nhúng (trên cơ sở FPGA)', '2021 International Symposium on Electrical and Electronics Engineering (ISEE), 2021, pp. 53-58)'),
+(39, 'gggggggggggggggggg', 'nnnnnnnnnnnnnnnn', 'ddddddddddđ');
 
 -- --------------------------------------------------------
 
@@ -182,13 +189,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `name`, `email`, `password`, `last_login`) VALUES
-(1, 'long', 'nguyenthanhlong601@gmail.com', '123456', '2025-01-02 04:01:50'),
+(1, 'long4', 'nguyenthanhlong601@gmail.com', '123456', '2025-01-03 02:21:11'),
 (2, 'long1', '123@gmail.com', '123456', '2025-01-02 04:04:56'),
 (3, 'trung', 'nguyenthanhtrung@gmail.com', '123456', '2025-01-02 08:09:06'),
-(4, 'phuong', 'phuong@gmail.com', '123456', '2025-01-02 09:00:30'),
-(5, 'Nam', 'nam@gmail.com', '123456', '2025-01-02 09:05:55'),
-(6, 'chien', 'chien@gmail.com', '123456', '2025-01-02 09:48:38'),
-(7, 'tuan', 'tuan@gmail.com', '123456', '2025-01-02 10:18:20');
+(8, 'phuong', 'phuong@gmail.com', '123456', '2025-01-02 18:02:14'),
+(9, 'tuan', 'tuan@gmail.com', '123456', '2025-01-02 18:02:26'),
+(10, 'chien', 'chien@gmail.com', '123456', '2025-01-02 18:02:35'),
+(11, 'luan1', 'luan@gmail.com', '123456', '2025-01-03 02:30:38');
 
 --
 -- Indexes for dumped tables
@@ -229,25 +236,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `experts`
 --
 ALTER TABLE `experts`
-  MODIFY `expert_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `expert_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `expertscientificworks`
 --
 ALTER TABLE `expertscientificworks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `scientificworks`
 --
 ALTER TABLE `scientificworks`
-  MODIFY `work_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `work_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables

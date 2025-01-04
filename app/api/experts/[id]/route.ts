@@ -1,6 +1,41 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const { id } = params;
+
+  try {
+    // Lấy thông tin chi tiết của expert
+    const [expert] = await db.query(
+      "SELECT * FROM experts WHERE expert_id = ?",
+      [id]
+    );
+
+    if (!expert) {
+      return NextResponse.json({ error: "Expert not found" }, { status: 404 });
+    }
+
+    // Lấy danh sách scientific works liên quan đến expert
+    const scientificWorks = await db.query(
+      `
+      SELECT sw.* 
+      FROM scientificworks sw
+      JOIN expertscientificworks esw ON sw.work_id = esw.work_id
+      WHERE esw.expert_id = ?
+      `,
+      [id]
+    );
+
+    return NextResponse.json({
+      expert,
+      scientificWorks,
+    });
+  } catch (error) {
+    console.error("Error fetching expert details:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
 
 export async function DELETE(req) {
     const { id } = req.query;
