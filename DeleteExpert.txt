@@ -1,0 +1,56 @@
+Cập nhật bảng expertscientificworks
+Dưới đây là cách thêm FOREIGN KEY với ràng buộc ON DELETE CASCADE:
+-- Thêm khóa chính
+ALTER TABLE `expertscientificworks`
+  ADD PRIMARY KEY (`id`);
+
+-- Thêm khóa ngoại cho `expert_id` tham chiếu tới `experts`
+ALTER TABLE `expertscientificworks`
+  ADD CONSTRAINT `fk_expert_id`
+  FOREIGN KEY (`expert_id`) REFERENCES `experts` (`expert_id`)
+  ON DELETE CASCADE;
+
+-- Thêm khóa ngoại cho `work_id` tham chiếu tới `scientificworks`
+ALTER TABLE `expertscientificworks`
+  ADD CONSTRAINT `fk_work_id`
+  FOREIGN KEY (`work_id`) REFERENCES `scientificworks` (`work_id`)
+  ON DELETE CASCADE;
+
+
+Lý do nên thiết lập FOREIGN KEY với ràng buộc ON DELETE CASCADE trong việc
+xoá dữ liệu expert và liên kết với scientificwork trong bảng expertscientificwork
+
+1. Tự động hóa quản lý liên kết:
+Nếu muốn khi xóa một expert hoặc một scientific work, các liên kết trong bảng 
+expertscientificworks cũng tự động được xóa mà không cần viết thêm logic trong ứng dụng.
+
+2. Duy trì toàn vẹn dữ liệu:
+Ràng buộc FOREIGN KEY giúp đảm bảo dữ liệu không bị "mồ côi" (ví dụ: các liên kết trong 
+expertscientificworks không trỏ tới bản ghi không tồn tại).
+
+3. Ứng dụng không cần kiểm soát logic xóa:
+Nếu muốn việc xóa hoàn toàn do cơ sở dữ liệu xử lý, ON DELETE CASCADE là 
+lựa chọn hợp lý.
+
+4. Giảm thiểu lỗi xóa thủ công:
+Với ON DELETE CASCADE, không cần viết truy vấn xóa liên kết thủ công, giúp 
+giảm khả năng sai sót.
+
+Ưu điểm:
+
+1. Hiệu suất cao:
+Toàn bộ quá trình xóa được thực hiện trong cơ sở dữ liệu. Cơ sở dữ liệu thường được 
+tối ưu hóa để xử lý các ràng buộc FOREIGN KEY, do đó thời gian thực thi ngắn và không 
+phải gửi nhiều truy vấn qua mạng.
+2. Giảm độ phức tạp:
+Bạn không cần viết thêm logic xóa thủ công trong ứng dụng.
+3. Dễ bảo trì:
+Không cần đảm bảo đồng bộ logic xóa trong nhiều nơi của ứng dụng.
+
+Nhược điểm:
+1. Khó kiểm soát logic xóa:
+Không thể thực hiện các kiểm tra hoặc thao tác bổ sung (như ghi log hoặc xác nhận 
+từ người dùng) trước khi xóa.
+2. Giới hạn linh hoạt:
+Ràng buộc ON DELETE CASCADE áp dụng cứng nhắc và không thể linh hoạt tùy chỉnh trong 
+từng trường hợp.

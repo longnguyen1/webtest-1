@@ -1,71 +1,63 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
-
-  try {
-    // Lấy thông tin chi tiết của expert
-    const [expert] = await db.query(
-      "SELECT * FROM experts WHERE expert_id = ?",
-      [id]
-    );
-
-    if (!expert) {
-      return NextResponse.json({ error: "Expert not found" }, { status: 404 });
-    }
-
-    // Lấy danh sách scientific works liên quan đến expert
-    const scientificWorks = await db.query(
-      `
-      SELECT sw.* 
-      FROM scientificworks sw
-      JOIN expertscientificworks esw ON sw.work_id = esw.work_id
-      WHERE esw.expert_id = ?
-      `,
-      [id]
-    );
-
-    return NextResponse.json({
-      expert,
-      scientificWorks,
-    });
-  } catch (error) {
-    console.error("Error fetching expert details:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
-
-
-export async function DELETE(req) {
-    const { id } = req.query;
-  
-    const connection = await db.getConnection();
+export async function GET(req: Request, context: { params: { id: string } }) {
+    const { id } = await context.params; // Đảm bảo params đã được xử lý đầy đủ
   
     try {
-      await connection.beginTransaction();
+      // Lấy thông tin chi tiết của expert
+      const expertQuery = `
+        SELECT * FROM experts WHERE expert_id = ?
+      `;
+      const [expertRows] = await db.query(expertQuery, [id]);
   
-      // Xoá liên kết trong bảng expertscientificworks
-      await connection.query(
-        "DELETE FROM expertscientificworks WHERE expert_id = ?",
-        [id]
-      );
+      if (expertRows.length === 0) {
+        return NextResponse.json({ error: "Expert not found" }, { status: 404 });
+      }
   
-      // Xoá expert khỏi bảng experts
-      await connection.query(
-        "DELETE FROM experts WHERE expert_id = ?",
-        [id]
-      );
+      // Lấy các scientific works liên quan
+      const worksQuery = `
+        SELECT sw.* FROM scientificworks sw
+        JOIN expertscientificworks esw ON esw.work_id = sw.work_id
+        WHERE esw.expert_id = ?
+      `;
+      const [worksRows] = await db.query(worksQuery, [id]);
   
-      await connection.commit();
-  
-      return NextResponse.json({ message: "Expert and their works deleted successfully" });
+      return NextResponse.json({
+        expert: expertRows[0],
+        scientificWorks: worksRows,
+      });
     } catch (error) {
-      await connection.rollback();
+      console.error("Error fetching expert or works:", error);
+      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+  }
+
+
+  export async function DELETE(req: Request, context: { params: { id: string } }) {
+    const { id } = context.params;
+  
+    try {
+      // Xóa liên kết trong bảng `expertscientificworks`
+      const deleteLinksQuery = `
+        DELETE FROM expertscientificworks WHERE expert_id = ?
+      `;
+      await db.query(deleteLinksQuery, [id]);
+  
+      // Xóa expert từ bảng `experts`
+      const deleteExpertQuery = `
+        DELETE FROM experts WHERE expert_id = ?
+      `;
+      const [result] = await db.query(deleteExpertQuery, [id]);
+  
+      if (result.affectedRows === 0) {
+        return NextResponse.json({ error: "Expert not found" }, { status: 404 });
+      }
+  
+      return NextResponse.json({ message: "Expert deleted successfully" });
+    } catch (error) {
       console.error("Error deleting expert:", error);
-      return NextResponse.json({ error: "Error deleting expert" }, { status: 500 });
-    } finally {
-      connection.release();
+      return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
   }
 
