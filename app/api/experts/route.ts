@@ -2,43 +2,16 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 // Hàm GET lấy danh sách experts hoặc works của expert
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const search = searchParams.get("search");
-  const expertId = searchParams.get("expertId");
-
-  if (expertId) {
-    // Trả về các scientificworks của expert cụ thể
-    const query = `
-      SELECT sw.*
-      FROM scientificworks sw
-      JOIN expertscientificworks esw ON esw.work_id = sw.work_id
-      WHERE esw.expert_id = ?
-    `;
-    
+export async function GET() {
     try {
-      const [rows] = await db.query(query, [expertId]);
-      return NextResponse.json({ data: rows });
+      const [results] = await db.query("SELECT * FROM experts WHERE deleted_at IS NULL");
+  
+      return NextResponse.json({ data: results });
     } catch (error) {
-      console.error("Error fetching works:", error);
-      return NextResponse.json({ error: "Unable to fetch works" }, { status: 500 });
+      console.error("Error fetching experts:", error);
+      return NextResponse.json({ error: "Failed to fetch experts" }, { status: 500 });
     }
   }
-
-  // Trả về danh sách experts
-  const query = `
-    SELECT * FROM experts 
-    WHERE name LIKE ?
-  `;
-  
-  try {
-    const [rows] = await db.query(query, [`%${search || ''}%`]);
-    return NextResponse.json({ data: rows });
-  } catch (error) {
-    console.error("Error fetching experts:", error);
-    return NextResponse.json({ error: "Unable to fetch experts" }, { status: 500 });
-  }
-}
 
 export async function POST(req) {
     const { name, code, year_of_birth, expertise, works } = await req.json();

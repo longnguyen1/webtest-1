@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function ExpertsPage() {
-  const [experts, setExperts] = useState<any[]>([]); // Giả sử experts là một mảng đối tượng
+export default function ScientificworksPage() {
+  const [scientificworks, setScientificworks] = useState<any[]>([]); // Giả sử experts là một mảng đối tượng
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [deletedExpert, setDeletedExpert] = useState<any | null>(null); // Lưu lại expert đã xóa
+  const [deletedWork, setDeletedWork] = useState<any | null>(null); // Lưu lại expert đã xóa
   const [showUndo, setShowUndo] = useState(false); // Quản lý việc hiển thị nút Undo
   const [page, setPage] = useState(1);
   const router = useRouter();
@@ -17,22 +17,24 @@ export default function ExpertsPage() {
   const refreshData = async () => {
     setLoading(true);
     // Fetch lại danh sách experts (giả sử endpoint là "/api/experts")
-    const response = await fetch(`/api/experts?page=${page}&search=${search}`);
+    const response = await fetch(
+      `/api/scientificworks?page=${page}&search=${search}`
+    );
     const data = await response.json();
-    setExperts(data);
+    setScientificworks(data);
   };
 
   // Cập nhật lại hàm fetch để xử lý phân trang và tìm kiếm
-  const fetchExperts = async () => {
+  const fetchScientificworks = async () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/experts?page=${page}&search=${encodeURIComponent(search)}`
+        `/api/scientificworks?page=${page}&search=${encodeURIComponent(search)}`
       );
       const data = await response.json();
-      setExperts(data);
+      setScientificworks(data);
     } catch (error) {
-      console.error("Error fetching experts:", error);
+      console.error("Error fetching works:", error);
     } finally {
       setLoading(false);
     }
@@ -40,24 +42,26 @@ export default function ExpertsPage() {
 
   // Fetch lại experts khi page hoặc search thay đổi
   useEffect(() => {
-    fetchExperts();
+    fetchScientificworks();
   }, [page, search]);
 
   // Xử lý sự kiện xóa expert
   // Xóa expert
-  const handleDelete = async (expertId: number) => {
-    const res = await fetch(`/api/experts/${expertId}`, { method: "DELETE" });
+  const handleDelete = async (workId: number) => {
+    const res = await fetch(`/api/scientificworks/${workId}`, {
+      method: "DELETE",
+    });
 
     if (res.ok) {
       // Lưu lại expert đã xóa
-      const deletedExpertData = experts.find(
-        (expert) => expert.expert_id === expertId
+      const deletedWorkData = scientificworks.find(
+        (work) => work.work_id === workId
       );
-      setDeletedExpert(deletedExpertData);
+      setDeletedWork(deletedWorkData);
 
       // Cập nhật lại danh sách experts sau khi xóa
-      setExperts((prevExperts) =>
-        prevExperts.filter((expert) => expert.expert_id !== expertId)
+      setScientificworks((prevScientificworks) =>
+        prevScientificworks.filter((work) => work.work_id !== workId)
       );
 
       // Hiển thị nút Undo
@@ -66,28 +70,28 @@ export default function ExpertsPage() {
       // Tự động ẩn thông báo Undo sau 5 giây
       setTimeout(() => {
         setShowUndo(false);
-        setDeletedExpert(null);
+        setDeletedWork(null);
       }, 5000);
     } else {
-      alert("Failed to delete expert.");
+      alert("Failed to delete work.");
     }
   };
 
-  const undoDelete = async (expertId: string) => {
+  const undoDelete = async (workId: string) => {
     try {
-      const res = await fetch(`/api/experts/${expertId}/undelete`, {
+      const res = await fetch(`/api/scientificworks/${workId}/undelete`, {
         method: "PATCH",
       });
 
       if (res.ok) {
-        alert("Expert restored successfully.");
+        alert("Work restored successfully.");
         refreshData(); // Làm mới dữ liệu để hiển thị lại expert
       } else {
         const error = await res.json();
-        alert(error.error || "Failed to restore expert.");
+        alert(error.error || "Failed to restore work.");
       }
     } catch (error) {
-      console.error("Error restoring expert:", error);
+      console.error("Error restoring work:", error);
       alert("An unexpected error occurred.");
     }
   };
@@ -97,10 +101,10 @@ export default function ExpertsPage() {
       <h1 className="text-2xl font-bold mb-6">Experts</h1>
 
       <button
-        onClick={() => router.push("/dashboard/experts/add")}
+        onClick={() => router.push("/dashboard/scientificworks/add")}
         className="bg-green-500 text-white px-4 py-2 rounded mb-4"
       >
-        Add New Expert
+        Add New Work
       </button>
 
       <div className="mb-4">
@@ -138,25 +142,23 @@ export default function ExpertsPage() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Code</th>
-              <th>Year of Birth</th>
-              <th>Expertise</th>
+              <th>Field</th>
+              <th>Place Of Application</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {experts.data && experts.data.length > 0 ? (
-              experts.data.map((expert) => (
-                <tr key={expert.expert_id}>
-                  <td>{expert.name}</td>
-                  <td>{expert.code}</td>
-                  <td>{expert.year_of_birth}</td>
-                  <td>{expert.expertise}</td>
+            {scientificworks.data && scientificworks.data.length > 0 ? (
+              scientificworks.data.map((work) => (
+                <tr key={work.work_id}>
+                  <td>{work.name}</td>
+                  <td>{work.field}</td>
+                  <td>{work.place_of_application}</td>
                   <td>
                     <button
                       onClick={() =>
                         router.push(
-                          `/dashboard/experts/edit/${expert.expert_id}`
+                          `/dashboard/scientificworks/edit/${work.work_id}`
                         )
                       }
                       className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
@@ -166,7 +168,7 @@ export default function ExpertsPage() {
                     <button
                       onClick={async () => {
                         const res = await fetch(
-                          `/api/experts/${expert.expert_id}`,
+                          `/api/scientificworks/${work.work_id}`,
                           {
                             method: "DELETE",
                           }
@@ -174,12 +176,12 @@ export default function ExpertsPage() {
 
                         if (res.ok) {
                           setNotification({
-                            message: "Expert marked as deleted.",
-                            undoAction: () => undoDelete(expert.expert_id),
+                            message: "Work marked as deleted.",
+                            undoAction: () => undoDelete(work.work_id),
                           });
                           refreshData(); // Làm mới giao diện
                         } else {
-                          alert("Failed to delete expert.");
+                          alert("Failed to delete work.");
                         }
                       }}
                       className="bg-red-500 text-white px-4 py-2 rounded"
@@ -192,7 +194,7 @@ export default function ExpertsPage() {
             ) : (
               <tr>
                 <td colSpan="5" className="text-center">
-                  No experts found
+                  No works found
                 </td>
               </tr>
             )}

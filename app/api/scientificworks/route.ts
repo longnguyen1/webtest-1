@@ -1,33 +1,58 @@
 import { NextResponse } from "next/server";
-import mysql from "mysql2/promise";
+import { db } from "@/lib/db";
 
-// Cấu hình kết nối MySQL
-const dbConfig = {
-  host: "localhost",
-  user: "root",
-  password: "", // Thay bằng mật khẩu của bạn
-  database: "test",
-};
-
-// API handler
+// Hàm GET lấy danh sách experts hoặc works của expert
 export async function GET() {
-  try {
-    // Kết nối đến database
-    const connection = await mysql.createConnection(dbConfig);
-
-    // Lấy dữ liệu từ bảng ScientificWorks
-    const [rows] = await connection.execute("SELECT * FROM scientificWorks");
-
-    // Đóng kết nối
-    await connection.end();
-
-    // Trả dữ liệu JSON
-    return NextResponse.json(rows);
-  } catch (error) {
-    console.error("Error fetching scientific works:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch scientific works" },
-      { status: 500 }
-    );
+    try {
+      const [results] = await db.query("SELECT * FROM scientificworks WHERE deleted_at IS NULL");
+      return NextResponse.json({ data: results });
+    } catch (error) {
+      console.error("Error fetching works:", error);
+      return NextResponse.json({ error: "Failed to fetch works" }, { status: 500 });
+    }
   }
-}
+
+export async function POST(req) {
+    const { name, field, place_of_application, experts } = await req.json();
+  
+    const connection = await db.getConnection();
+  
+    try {
+      await connection.beginTransaction();
+  
+      // Insert expert vào bảng experts
+      const [result] = await connection.query(
+        "INSERT INTO experts (name, field, place_of_application) VALUES (?, ?, ?)",
+        [name, field, place_of_application]
+      );
+      
+      const workId = result.insertId;
+  
+      // Thêm các scientificworks vào bảng scientificworks
+      for (const expert of experts) {
+        const [expertResult] = await connection.query(
+          "INSERT INTO experts (title, year) VALUES (?, ?)",
+          [expert.title, expert.year]
+        );
+        
+        const expertId = expertResult.insertId;
+  
+        // Thêm vào bảng liên kết expertscientificworks
+        await connection.query(
+          "INSERT INTO expertscientificworks ( work_id, expert_id) VALUES (?, ?)",
+          [workId, expertId]
+        );
+      }
+  
+      await connection.commit();
+  
+      return NextResponse.json({ message: "Work and experts added successfully" });
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error adding Work and experts:", error);
+      return NextResponse.json({ error: "Error adding Work and experts" }, { status: 500 });
+    } finally {
+      connection.release();
+    }
+  }
+  

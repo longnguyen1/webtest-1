@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 const ScientificWorksPage = () => {
-  const [works, setWorks] = useState([]);
+  const [scientificworks, setScientificworks] = useState([]);
 
   useEffect(() => {
     const fetchScientificWorks = async () => {
@@ -13,7 +13,7 @@ const ScientificWorksPage = () => {
           throw new Error("Failed to fetch scientific works");
         }
         const data = await response.json();
-        setWorks(data);
+        setScientificworks(data);
       } catch (error) {
         console.error(error);
       }
@@ -39,7 +39,7 @@ const ScientificWorksPage = () => {
           </tr>
         </thead>
         <tbody>
-          {works.map((work) => (
+          {scientificworks.map((work) => (
             <tr key={work.work_id}>
               <td>{work.work_id}</td>
               <td>{work.name}</td>
