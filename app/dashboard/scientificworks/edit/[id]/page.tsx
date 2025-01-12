@@ -10,13 +10,14 @@ const EditWorkPage = () => {
   console.log("Editing work with ID:", id); // Kiểm tra ID được truyền vào
 
   const [work, setWork] = useState(null);
-  const [expert, setExpert] = useState([]);
+  const [scientificWorks, setScientificWorks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [field, setField] = useState("");
   const [placeOfApplication, setPlaceOfApplication] = useState("");
+  const [selectedExperts, setSelectedExperts] = useState([]);
 
-  // Fetch dữ liệu expert và scientific works
+  // Fetch dữ liệu work và scientific works
   useEffect(() => {
     const fetchWork = async () => {
       setLoading(true);
@@ -26,15 +27,17 @@ const EditWorkPage = () => {
           throw new Error("Failed to fetch work data");
         }
         const data = await response.json();
-        setWork(data.work);
-        setExpert(data.expert || []);
 
-        setName(data.work.name || "");
-        setField(data.work.field || "");
-        setPlaceOfApplication(data.work.place_of_application || "");
-        setSelectedExperts(
-          data.experts?.map((expert) => expert.expert_id) || []
+        console.log("Fetched work data:", data); // Debug API response
+
+        setWork(data.work || {});
+        setScientificWorks(
+          Array.isArray(data.scientificWorks) ? data.scientificWorks : []
         );
+        setName(data.work?.name || "");
+        setField(data.work?.field || "");
+        setPlaceOfApplication(data.work?.place_of_application || "");
+        setSelectedExperts(data.selectedExperts || []);
       } catch (error) {
         console.error("Error fetching work data:", error);
       } finally {
@@ -60,7 +63,10 @@ const EditWorkPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ expert: updatedWorks, selectedExperts }),
+        body: JSON.stringify({
+          work: updatedWork,
+          selectedExperts,
+        }),
       });
 
       if (!res.ok) {
@@ -79,7 +85,7 @@ const EditWorkPage = () => {
 
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">Edit Page for ID: {id}</h1>
+      <h1 className="text-2xl font-bold mb-6">Edit Work for ID: {id}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -101,7 +107,7 @@ const EditWorkPage = () => {
           />
         </div>
         <div>
-          <label className="block font-bold">Place of application</label>
+          <label className="block font-bold">Place of Application</label>
           <input
             type="text"
             value={placeOfApplication}
@@ -111,7 +117,7 @@ const EditWorkPage = () => {
         </div>
 
         <div>
-          <label className="block font-bold">Select Scientific Works</label>
+          <label className="block font-bold">Select Related Experts</label>
           <select
             multiple
             value={selectedExperts}
@@ -122,11 +128,12 @@ const EditWorkPage = () => {
             }
             className="border p-2 rounded w-full"
           >
-            {scientificWorks.map((expert) => (
-              <option key={expert.expert_id} value={expert.expert_id}>
-                {expert.title}
-              </option>
-            ))}
+            {Array.isArray(scientificWorks) &&
+              scientificWorks.map((expert) => (
+                <option key={expert.expert_id} value={expert.expert_id}>
+                  {expert.title}
+                </option>
+              ))}
           </select>
         </div>
 

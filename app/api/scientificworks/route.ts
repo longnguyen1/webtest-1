@@ -3,14 +3,15 @@ import { db } from "@/lib/db";
 
 // Hàm GET lấy danh sách experts hoặc works của expert
 export async function GET() {
-    try {
-      const [results] = await db.query("SELECT * FROM scientificworks WHERE deleted_at IS NULL");
-      return NextResponse.json({ data: results });
-    } catch (error) {
-      console.error("Error fetching works:", error);
-      return NextResponse.json({ error: "Failed to fetch works" }, { status: 500 });
-    }
+  try {
+    const [results] = await db.query("SELECT * FROM scientificworks WHERE deleted_at IS NULL");
+    return NextResponse.json(results); // Trả về kết quả dưới dạng mảng
+  } catch (error) {
+    console.error("Error fetching works:", error);
+    return NextResponse.json({ error: "Failed to fetch works" }, { status: 500 });
   }
+}
+
 
 export async function POST(req) {
     const { name, field, place_of_application, experts } = await req.json();

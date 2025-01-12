@@ -5,14 +5,14 @@ export async function PATCH(
   req: Request,
   context: { params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = await context.params;  // Sử dụng await để đảm bảo params được xử lý đúng
 
   if (!id) {
-    return NextResponse.json({ error:  "Work ID is required" }, { status: 400 });
+    return NextResponse.json({ error: "Work ID is required" }, { status: 400 });
   }
 
   try {
-    // Cập nhật cột `deleted_at` thành NULL để khôi phục expert
+    // Cập nhật cột `deleted_at` thành NULL để khôi phục work
     const query = "UPDATE scientificworks SET deleted_at = NULL WHERE work_id = ?";
     const [result] = await db.query(query, [id]);
 

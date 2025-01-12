@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 07, 2025 at 02:41 PM
+-- Generation Time: Jan 12, 2025 at 04:51 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -52,7 +52,7 @@ INSERT INTO `experts` (`expert_id`, `name`, `code`, `year_of_birth`, `address`, 
 (7, 'BÙI TRỌNG TÚ', 'fetel-07', '1980', 'trường Đại học Khoa học Tự nhiên, Đại học Quốc gia Thành phố Hồ Chí Minh.', '0900000000', '– Tốt nghiệp Đại học và Cao học tại trường Đại học Khoa học Tự nhiên, Đại học Quốc gia Thành phố Hồ Chí Minh.\r\n– Tốt nghiệp tiến sĩ tại Đại học Tokyo, Nhật Bản\r\nLĩnh vực chuyên môn:\r\n– Lĩnh vực: Điện tử – Viễn thông\r\n– Chuyên ngành: Vi điện tử\r\n– Chuyên m', NULL),
 (8, 'HUỲNH HỮU THUẬN', 'fetel-08', '1970', 'khoa Điện tử – Viễn thông HCMUS', '0900000000', 'Tốt nghiệp Đại học, Thạc sỹ và Tiến sỹ vào các năm 1997, 2001 và 2009 tương ứng. Lĩnh vực chuyên môn là Máy tính – Hệ thống nhúng trên DSP, FPGA và thiết kế vi mạch.\r\nHướng nghiên cứu:\r\nDSP trong xử lý âm thanh, hình ảnh, Kiến trúc phần cứng, hệ thống nhú', NULL),
 (14, 'Long', 'fetel-09', '2000', NULL, NULL, 'aaaaaaaaaaaaaaaa', '2025-01-07 20:41:03'),
-(15, 'long2', 'fetel-12', '2000', NULL, NULL, 'aaaaaaaaaaaaaaaaaa', NULL),
+(15, 'long2', 'fetel-12', '2000', NULL, NULL, 'aaaaaaaaaaaaaaaaaa123', NULL),
 (16, 'trung', 'fetel-14', '2000', NULL, NULL, 'âsasasasa', NULL),
 (17, 'trung2', 'fetel-15', '1999', NULL, NULL, 'aaaaaaaaaaaaaaaaaa', NULL),
 (18, 'trung3', 'fetel-16', '1999', NULL, NULL, 'sssssssssssssss', NULL);
@@ -112,6 +112,31 @@ INSERT INTO `expertscientificworks` (`id`, `expert_id`, `work_id`) VALUES
 (37, 8, 37),
 (38, 8, 38),
 (44, 18, 39);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `prompt` text NOT NULL,
+  `response` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `tokens_used` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `prompt`, `response`, `created_at`, `tokens_used`) VALUES
+(1, 'hôm nay là th? m?y?', 'Hôm nay là th? Sáu.', '2025-01-10 14:10:00', NULL),
+(2, 'ngày mai là ngày nào?', 'Ngày mai là ngày ti?p theo c?a ngày hôm nay.', '2025-01-10 14:28:41', 37),
+(3, 't?t âm l?ch n?m nay di?n ra vào ngày nào?\n', 'T?t âm l?ch n?m nay di?n ra vào ngày 1/1/2023, t?c là vào ngày 28 tháng 01 n?m 2023 (theo l?ch âm).', '2025-01-10 14:49:41', 86),
+(4, 'N??c M? có bao nhiêu t?ng th?ng?', '??n th?i ?i?m hi?n t?i, M? ?ã có t?ng c?ng 46 t?ng th?ng t? khi George Washington ???c b?u làm t?ng th?ng ??u tiên vào n?m 1789 cho ??n khi Joe Biden tr? thành t?ng th?ng th? 46 vào n?m 2021.', '2025-01-11 16:49:41', 106),
+(5, 'Who is the 25th US President?', 'William McKinley', '2025-01-11 16:52:00', 20);
 
 -- --------------------------------------------------------
 
@@ -219,6 +244,12 @@ ALTER TABLE `expertscientificworks`
   ADD KEY `work_id` (`work_id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `scientificworks`
 --
 ALTER TABLE `scientificworks`
@@ -245,6 +276,12 @@ ALTER TABLE `experts`
 --
 ALTER TABLE `expertscientificworks`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `scientificworks`

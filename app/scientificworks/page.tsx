@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 const ScientificWorksPage = () => {
   const [scientificworks, setScientificworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchScientificWorks = async () => {
@@ -13,14 +14,30 @@ const ScientificWorksPage = () => {
           throw new Error("Failed to fetch scientific works");
         }
         const data = await response.json();
-        setScientificworks(data);
+
+        // Log dữ liệu nhận được từ API
+        console.log("Fetched data:", data); // Thêm log để kiểm tra
+
+        // Kiểm tra nếu dữ liệu là mảng
+        if (Array.isArray(data)) {
+          setScientificworks(data);
+        } else {
+          throw new Error("Invalid data format: expected an array");
+        }
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchScientificWorks();
   }, []);
+
+  // Kiểm tra trạng thái loading
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
