@@ -1,3 +1,9 @@
+import Link from "next/link";
+
 export default function Home() {
-  return <p>This is home page</p>;
+  return (
+    <div>
+      <h1>This is home page</h1>\<Link href="/openai">Chat với GPT</Link>
+    </div>
+  );
 }

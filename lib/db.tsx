@@ -5,4 +5,5 @@ export const db = mysql.createPool({
   user: "root", // Tên người dùng
   password: "", // Mật khẩu chính xác
   database: "test", // Tên database chính xác
+  charset: "utf8mb4",
 });
